@@ -28,8 +28,6 @@ import javafx.stage.Stage;
 public class Main extends Application
 {
 
-
-
     @Override
     public void start(Stage primaryStage) throws Exception
     {
@@ -49,7 +47,7 @@ public class Main extends Application
 
         // BMI
         TextField bmi = new TextField();
-        Label bmiScale = new Label("BMI Scale:\n");
+        Label bmiScale = new Label("");
 
         /***********************
          * Control configurations
@@ -64,38 +62,67 @@ public class Main extends Application
             @Override
             public void handle(ActionEvent event)
             {
-                Double heightEntered = Double.valueOf(myHeight.getText());
-                Double weightEntered = Double.valueOf(myWeight.getText());
+                double heightEntered;
+                double weightEntered;
+                double bmiCalculated;
 
-                Double bmiCalculated = (weightEntered/(heightEntered*heightEntered));
+                try
+                {
+                    // Converts user input into double
+                    heightEntered = Double.parseDouble(heightInput.getText());
+                    weightEntered = Double.parseDouble(weightInput.getText());
 
-                bmi.setText(bmiCalculated.toString());
+                    // Throws error if out of range
+                    if(heightEntered <= 0 || weightEntered <= 0)
+                    {
+                        throw new java.lang.Exception();
+                    }
 
-                // BMI Scale
-                if(bmiCalculated < 18.5)
-                {
-                    // Underweight
-                    bmiScale.setText("Your BMI indicates you are UNDERWEIGHT");
+                    if(heightEntered > 2.5 || weightEntered > 500)
+                    {
+                        throw new java.lang.Exception();
+                    }
+
+                    // Calculates BMI
+                    bmiCalculated = Math.round((weightEntered/(heightEntered*heightEntered)));
+                    bmi.setText(String.valueOf(bmiCalculated));
+
+                    // BMI Scale
+                    if(bmiCalculated < 18.5)
+                    {
+                        // Underweight
+                        bmiScale.setText("BMI Scale:\nYour BMI indicates you are UNDERWEIGHT");
+                    }
+                    else if (bmiCalculated >= 18.5 && bmiCalculated <= 24.9)
+                    {
+                        // Normal
+                        bmiScale.setText("BMI Scale:\nYour BMI indicates you are NORMAL");
+                    }
+                    else if (bmiCalculated >= 25 && bmiCalculated <= 29.9)
+                    {
+                        // Overweight
+                        bmiScale.setText("BMI Scale:\nYour BMI indicates you are OVERWEIGHT");
+                    }
+                    else
+                    {
+                        // Obese
+                        bmiScale.setText("BMI Scale:\nYour BMI indicates you are OBESE");
+                    }
                 }
-                else if (bmiCalculated >= 18.5 && bmiCalculated <= 24.9)
+                catch (NumberFormatException e)
                 {
-                    // Normal
-                    bmiScale.setText("Your BMI indicates you are NORMAL");
+                    bmiScale.setText("Error: Please enter a number for Height and Weight");
                 }
-                else if (bmiCalculated >= 25 && bmiCalculated <= 29.9)
+                catch (Exception e)
                 {
-                    // Overweight
-                    bmiScale.setText("Your BMI indicates you are OVERWEIGHT");
-                }
-                else
-                {
-                    // Obese
-                    bmiScale.setText("Your BMI indicates you are OBESE");
+                    bmiScale.setText("Error:\nHeight must be greater than 0 and less than 2.5\n" +
+                                     "Weight must be greater than 0 and less than 500");
                 }
 
             }
         }
 
+        // Actions the button
         bmiButton.setOnAction(new ButtonClickHandler());
 
         /**********************
@@ -121,19 +148,21 @@ public class Main extends Application
          *****************/
 
         GridPane gridPane = new GridPane();
+        gridPane.setVgap(10);
+        gridPane.setHgap(10);
 
         // Height
-        gridPane.add(hboxHeight, 0, 0);
-        gridPane.add(hboxHeightInput, 0, 1);
+        gridPane.add(hboxHeight, 1, 1);
+        gridPane.add(hboxHeightInput, 1, 2);
 
         // Weight
-        gridPane.add(hboxWeight, 0, 2);
-        gridPane.add(hboxWeightInput, 0, 3);
+        gridPane.add(hboxWeight, 1, 3);
+        gridPane.add(hboxWeightInput, 1, 4);
 
         // Bmi
-        gridPane.add(hboxBmiButton, 0, 4);
-        gridPane.add(hboxBmiResult, 0, 5);
-        gridPane.add(hboxBmiScale, 0, 6);
+        gridPane.add(hboxBmiButton, 1, 5);
+        gridPane.add(hboxBmiResult, 1, 6);
+        gridPane.add(hboxBmiScale, 1, 7);
 
 
         Scene scene = new Scene(gridPane, 320, 480);
